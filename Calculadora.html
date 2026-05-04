@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Precio 💻 - CarlosAPPs</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .ad-space {
+            width: 100%;
+            height: 60px;
+            background-color: #1e1e1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #444;
+            overflow: hidden;
+        }
+
+        h2 { color: #2196F3; margin-bottom: 25px; }
+        
+        .pvp-text {
+            text-align: right;
+            font-style: italic;
+            color: #888;
+            font-size: 14px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #2196F3;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .radio-item { font-size: 14px; }
+
+        button {
+            width: 100%;
+            height: 60px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        #txtPeriodo { color: #2196F3; font-size: 16px; margin-bottom: 10px; }
+        #txtResultado { color: #4CAF50; font-size: 24px; font-weight: bold; }
+
+        footer {
+            padding: 10px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BANNER SUPERIOR -->
+    <div class="ad-space">
+        <!-- PEGA AQUÍ TU CÓDIGO DE ADSENSE -->
+        PUBLICIDAD DISPONIBLE
+    </div>
+
+    <div class="container">
+        <span id="txtSoloIva" class="pvp-text">PVP: $0.00</span>
+        <h2>Calculadora de precio a instalar</h2>
+
+        <input type="number" id="editPrecioBase" placeholder="Precio Base (ej: 17.86)" step="0.01">
+        <input type="number" id="editDescuento" placeholder="% Descuento (Opcional)">
+
+        <div style="text-align: left; color: #2196F3; font-weight: bold; margin-top: 15px;">Día de instalación:</div>
+        <div class="radio-group">
+            <div class="radio-item"><input type="radio" name="dia" id="rbHoy" checked> Hoy</div>
+            <div class="radio-item"><input type="radio" name="dia" id="rbManana"> Mañana</div>
+            <div class="radio-item"><input type="radio" name="dia" id="rbPasado"> En 2 días</div>
+        </div>
+
+        <button onclick="ejecutarCalculo()">CALCULAR PAGO INICIAL</button>
+
+        <div id="txtPeriodo">Periodo detectado: --</div>
+        <div id="txtResultado">Total a pagar: $0.00</div>
+    </div>
+
+    <footer>
+        © 2026 CarlosAPPs - Todos los derechos reservados
+    </footer>
+
+    <!-- BANNER INFERIOR -->
+    <div class="ad-space">
+        <!-- PEGA AQUÍ TU CÓDIGO DE ADSENSE -->
+        PUBLICIDAD DISPONIBLE
+    </div>
+
+    <script>
+        function ejecutarCalculo() {
+            const precioBase = parseFloat(document.getElementById('editPrecioBase').value);
+            const descuento = parseFloat(document.getElementById('editDescuento').value) || 0;
+
+            if (isNaN(precioBase)) {
+                alert("Por favor, ingresa el precio base");
+                return;
+            }
+
+            // Cálculo IVA 15%
+            const precioConIva = precioBase * 1.15;
+            document.getElementById('txtSoloIva').innerText = `PVP: $${precioConIva.toFixed(2)}`;
+
+            const precioFinalConDescuento = precioConIva * (1 - (descuento / 100));
+
+            // Lógica de Fecha
+            let fecha = new Date();
+            if (document.getElementById('rbManana').checked) fecha.setDate(fecha.getDate() + 1);
+            if (document.getElementById('rbPasado').checked) fecha.setDate(fecha.getDate() + 2);
+
+            const diaInstalacion = fecha.getDate();
+            const mesActual = fecha.getMonth();
+            const añoActual = fecha.getFullYear();
+            const totalDiasMes = new Date(añoActual, mesActual + 1, 0).getDate();
+            
+            const valorPorDia = precioFinalConDescuento / totalDiasMes;
+            let totalAPagar;
+            let periodo;
+
+            if (diaInstalacion <= 15) {
+                totalAPagar = valorPorDia * (totalDiasMes - diaInstalacion + 1);
+                periodo = "1";
+            } else {
+                totalAPagar = valorPorDia * ((totalDiasMes - diaInstalacion + 1) + 15);
+                periodo = "16";
+            }
+
+            document.getElementById('txtPeriodo').innerText = `Ciclo: Periodo ${periodo} (Instalación: día ${diaInstalacion} de este mes)`;
+            document.getElementById('txtResultado').innerText = `Total a pagar: $${totalAPagar.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
